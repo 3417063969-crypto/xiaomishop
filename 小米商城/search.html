@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>搜索 - 小米商城</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1226px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* ========== 顶部导航栏 ========== */
+        .top-bar {
+            background: #333;
+            color: #999;
+            font-size: 12px;
+            padding: 8px 0;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-links a, .user-links a {
+            color: #b0b0b0;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .top-links a:hover, .user-links a:hover {
+            color: #ff6700;
+        }
+
+        .separator {
+            color: #424242;
+            margin: 0 5px;
+        }
+
+        /* ========== 主头部 ========== */
+        .main-header {
+            background: #fff;
+            padding: 22px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .main-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon-img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ff6700;
+        }
+
+        .logo-text span {
+            color: #333;
+            font-weight: 400;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .cart-icon:hover {
+            color: #ff6700;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -12px;
+            background: #ff6700;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 20px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* ========== 搜索区域 ========== */
+        .search-section {
+            padding: 20px 0 10px;
+        }
+
+        .search-box-large {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .search-box-large:focus-within {
+            border-color: #ff6700;
+        }
+
+        .search-box-large input {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .search-box-large .search-btn {
+            background: #ff6700;
+            border: none;
+            padding: 14px 28px;
+            cursor: pointer;
+            font-size: 18px;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        .search-box-large .search-btn:hover {
+            background: #f85c00;
+        }
+
+        .search-box-large .clear-btn {
+            background: none;
+            border: none;
+            padding: 0 15px;
+            cursor: pointer;
+            font-size: 18px;
+            color: #ccc;
+            display: none;
+        }
+
+        .search-box-large .clear-btn.show {
+            display: block;
+        }
+
+        /* ========== 面包屑 ========== */
+        .breadcrumb {
+            padding: 15px 0;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #ff6700;
+        }
+
+        /* ========== 搜索内容区 ========== */
+        .search-content {
+            min-height: 400px;
+        }
+
+        /* 热门搜索 & 搜索历史 */
+        .search-suggestions {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .suggestion-section {
+            margin-bottom: 20px;
+        }
+
+        .suggestion-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .suggestion-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .suggestion-title .icon {
+            margin-right: 8px;
+        }
+
+        .clear-history {
+            font-size: 12px;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .clear-history:hover {
+            color: #e4393c;
+        }
+
+        .suggestion-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .suggestion-tag {
+            padding: 6px 16px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .suggestion-tag:hover {
+            background: #ff6700;
+            color: white;
+        }
+
+        .suggestion-tag.hot {
+            color: #e4393c;
+        }
+
+        .suggestion-tag.hot:hover {
+            background: #e4393c;
+            color: white;
+        }
+
+        /* 搜索结果统计 */
+        .result-stats {
+            padding: 10px 0 15px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .result-stats strong {
+            color: #333;
+        }
+
+        /* 搜索结果网格 */
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .result-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid #eee;
+            display: block;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .result-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: #f5f5f5;
+        }
+
+        .result-card .info {
+            padding: 15px;
+        }
+
+        .result-card .name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .result-card .price {
+            color: #ff6700;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .result-card .price del {
+            color: #999;
+            font-size: 12px;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+
+        /* 空状态 */
+        .empty-result {
+            text-align: center;
+            padding: 80px 0;
+            background: #fff;
+            border-radius: 16px;
+        }
+
+        .empty-result .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-result p {
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .empty-result .sub {
+            font-size: 13px;
+        }
+
+        /* 底部 Footer */
+        .footer {
+            background: #fff;
+            margin-top: 40px;
+            padding: 40px 0 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h4 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .footer-col a {
+            display: block;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .footer-col a:hover {
+            color: #ff6700;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-links {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .search-box-large input {
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+            .search-box-large .search-btn {
+                padding: 12px 18px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-links">
+                <a href="#">小米商城</a>
+                <span class="separator">|</span>
+                <a href="#">MIUI</a>
+                <span class="separator">|</a>
+                <a href="#">云服务</a>
+                <span class="separator">|</span>
+                <a href="#">小米运动</a>
+            </div>
+            <div class="user-links">
+                <a href="profile.html" id="userNameDisplay">个人中心</a>
+                <span class="separator">|</span>
+                <a href="orders.html">我的订单</a>
+                <span class="separator">|</span>
+                <a href="login.html" id="logoutBtn">退出登录</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主头部 -->
+    <div class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo-area">
+                <img src="images/小米logo.jpg" alt="Logo" class="logo-icon-img">
+                <div class="logo-text">小米<span>商城</span></div>
+            </a>
+            <a href="cart.html" class="cart-icon">
+                🛒
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="index.html">首页</a>
+            <span>&gt;</span>
+            <span>搜索</span>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="search-section">
+            <div class="search-box-large">
+                <input type="text" id="searchInput" placeholder="搜索商品、品牌、型号..." autofocus>
+                <button class="clear-btn" id="clearBtn">✕</button>
+                <button class="search-btn" id="searchBtn">🔍</button>
+            </div>
+        </div>
+
+        <!-- 搜索内容 -->
+        <div class="search-content" id="searchContent"></div>
+    </div>
+
+    <!-- 底部 Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>帮助中心</h4>
+                    <a href="#">账户管理</a>
+                    <a href="#">购物指南</a>
+                    <a href="#">订单操作</a>
+                </div>
+                <div class="footer-col">
+                    <h4>服务支持</h4>
+                    <a href="#">售后政策</a>
+                    <a href="#">自助服务</a>
+                    <a href="#">联系客服</a>
+                </div>
+                <div class="footer-col">
+                    <h4>小米之家</h4>
+                    <a href="#">查找门店</a>
+                    <a href="#">小米之家</a>
+                    <a href="#">小米社区</a>
+                </div>
+                <div class="footer-col">
+                    <h4>关注我们</h4>
+                    <a href="#">新浪微博</a>
+                    <a href="#">官方微信</a>
+                    <a href="#">小米商城APP</a>
+                </div>
+                <div class="footer-col">
+                    <h4>合作加盟</h4>
+                    <a href="#">小米直销</a>
+                    <a href="#">企业团购</a>
+                    <a href="#">联盟合作</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2026 小米商城 版权所有 | 探索科技美好生活</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 产品数据（与 index.html 保持一致） ==========
+        const allProducts = [
+            { id: 1, name: "Redmi Note 13 Pro", price: 1599, originalPrice: 1999, image: "images/redminote13pro.png", category: "Redmi手机", tag: "秒杀", sales: 125000 },
+            { id: 2, name: "小米手环9", price: 249, originalPrice: 299, image: "images/小米手环9.jpg", category: "智能穿戴", tag: "秒杀", sales: 32000 },
+            { id: 3, name: "小米空气净化器", price: 899, originalPrice: 1299, image: "images/空气净化器.png", category: "家电", tag: "秒杀", sales: 18000 },
+            { id: 4, name: "Xiaomi Buds 5", price: 399, originalPrice: 599, image: "images/buds5.png", category: "智能穿戴", tag: "秒杀", sales: 25000 },
+            { id: 5, name: "Xiaomi 14 Ultra", price: 6499, image: "images/14ultra.png", category: "Xiaomi手机", tag: "新品", sales: 58000 },
+            { id: 6, name: "Xiaomi Pad 6S Pro", price: 3299, image: "images/pad6s.png", category: "平板", tag: "新品", sales: 23000 },
+            { id: 7, name: "米家空调", price: 3599, image: "images/米家空调.png", category: "家电", tag: "新品", sales: 12000 },
+            { id: 8, name: "小米手表S4", price: 999, image: "images/watchs4.png", category: "智能穿戴", tag: "新品", sales: 45000 },
+            { id: 9, name: "Xiaomi 14", price: 3999, image: "images/14.png", category: "Xiaomi手机", sales: 125000 },
+            { id: 10, name: "Redmi K70", price: 2499, image: "images/k70.png", category: "Redmi手机", sales: 98000 },
+            { id: 11, name: "小米电视S75", price: 3999, image: "images/dianshi.png", category: "电视", sales: 45000 },
+            { id: 12, name: "米家冰箱 十字", price: 2999, image: "images/bingxiang.png", category: "家电", sales: 32000 },
+            { id: 13, name: "Xiaomi 14 Pro", price: 4999, image: "images/14pro.png", category: "Xiaomi手机", sales: 68000 },
+            { id: 16, name: "Xiaomi MIX Fold 4", price: 8999, image: "images/mixfold4.png", category: "Xiaomi手机", sales: 18000 },
+            { id: 17, name: "米家全能扫拖机器人", price: 2999, image: "images/扫地机器人.png", category: "家电", sales: 8900 },
+            { id: 19, name: "米家洗烘一体机", price: 3499, image: "images/洗烘一体机.png", category: "家电", sales: 5600 },
+            { id: 20, name: "小米智能门锁 M20", price: 1299, image: "images/门锁.jpg", category: "智能家居", sales: 15000 }
+        ];
+
+        // 热门搜索词
+        const hotSearches = ["小米14", "Redmi", "手环", "耳机", "电视", "空调", "扫地机器人", "门锁"];
+
+        // ========== 搜索历史管理 ==========
+        function getSearchHistory() {
+            return JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        }
+
+        function saveSearchHistory(history) {
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+        }
+
+        function addSearchKeyword(keyword) {
+            if (!keyword.trim()) return;
+            let history = getSearchHistory();
+            history = history.filter(item => item !== keyword.trim());
+            history.unshift(keyword.trim());
+            if (history.length > 10) history = history.slice(0, 10);
+            saveSearchHistory(history);
+        }
+
+        function clearSearchHistory() {
+            saveSearchHistory([]);
+        }
+
+        // ========== 搜索功能 ==========
+        function searchProducts(keyword) {
+            if (!keyword.trim()) return [];
+            const lowerKeyword = keyword.toLowerCase().trim();
+            return allProducts.filter(p => 
+                p.name.toLowerCase().includes(lowerKeyword) ||
+                p.category.toLowerCase().includes(lowerKeyword)
+            );
+        }
+
+        // ========== 渲染函数 ==========
+        function renderSearchSuggestions() {
+            const container = document.getElementById('searchContent');
+            const history = getSearchHistory();
+            
+            container.innerHTML = `
+                <div class="search-suggestions">
+                    ${hotSearches.length > 0 ? `
+                        <div class="suggestion-section">
+                            <div class="suggestion-header">
+                                <div class="suggestion-title"><span class="icon">🔥</span>热门搜索</div>
+                            </div>
+                            <div class="suggestion-tags">
+                                ${hotSearches.map(tag => `
+                                    <span class="suggestion-tag hot" data-keyword="${tag}">${tag}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${history.length > 0 ? `
+                        <div class="suggestion-section">
+                            <div class="suggestion-header">
+                                <div class="suggestion-title"><span class="icon">🕐</span>搜索历史</div>
+                                <button class="clear-history" id="clearHistoryBtn">清空历史</button>
+                            </div>
+                            <div class="suggestion-tags">
+                                ${history.map(tag => `
+                                    <span class="suggestion-tag" data-keyword="${tag}">${tag}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // 绑定事件
+            document.querySelectorAll('.suggestion-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const keyword = this.dataset.keyword;
+                    document.getElementById('searchInput').value = keyword;
+                    doSearch(keyword);
+                });
+            });
+            
+            const clearBtn = document.getElementById('clearHistoryBtn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', function() {
+                    if (confirm('确定清空搜索历史吗？')) {
+                        clearSearchHistory();
+                        renderSearchSuggestions();
+                    }
+                });
+            }
+        }
+
+        function renderSearchResults(keyword, results) {
+            const container = document.getElementById('searchContent');
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-result">
+                        <div class="icon">🔍</div>
+                        <p>未找到 "<strong>${keyword}</strong>" 相关商品</p>
+                        <p class="sub">试试其他关键词吧</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="result-stats">
+                    找到 <strong>${results.length}</strong> 件 "<strong>${keyword}</strong>" 相关商品
+                </div>
+                <div class="result-grid">
+                    ${results.map(p => `
+                        <a href="product.html?id=${p.id}" class="result-card">
+                            <img src="${p.image}" alt="${p.name}" onerror="this.src='https://picsum.photos/300/200?random=${p.id}'">
+                            <div class="info">
+                                <div class="name">${p.name}</div>
+                                <div class="price">
+                                    ¥${p.price.toLocaleString()}
+                                    ${p.originalPrice ? `<del>¥${p.originalPrice.toLocaleString()}</del>` : ''}
+                                </div>
+                                ${p.sales ? `<div style="font-size: 12px; color: #999; margin-top: 5px;">月销 ${p.sales}+</div>` : ''}
+                            </div>
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function doSearch(keyword) {
+            if (!keyword.trim()) {
+                renderSearchSuggestions();
+                return;
+            }
+            
+            const results = searchProducts(keyword);
+            addSearchKeyword(keyword);
+            renderSearchResults(keyword, results);
+            
+            // 更新URL参数
+            const url = new URL(window.location);
+            url.searchParams.set('q', keyword);
+            window.history.pushState({}, '', url);
+        }
+
+        // ========== 检查登录状态 ==========
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
+            const currentUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            const userNameSpan = document.getElementById('userNameDisplay');
+            
+            if (isLoggedIn && currentUser) {
+                if (userNameSpan) {
+                    userNameSpan.textContent = currentUser;
+                    userNameSpan.href = 'profile.html';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 退出登录
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+        }
+
+        // 更新购物车数量
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('shoppingCart') || '[]');
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) {
+                cartCountSpan.textContent = totalCount;
+            }
+        }
+
+        // ========== 初始化 ==========
+        function init() {
+            checkLoginStatus();
+            updateCartCount();
+            
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            
+            // 获取URL参数中的搜索词
+            const urlParams = new URLSearchParams(window.location.search);
+            const keyword = urlParams.get('q');
+            
+            if (keyword) {
+                searchInput.value = keyword;
+                doSearch(keyword);
+            } else {
+                renderSearchSuggestions();
+            }
+            
+            // 搜索按钮点击
+            searchBtn.addEventListener('click', function() {
+                doSearch(searchInput.value);
+            });
+            
+            // 回车搜索
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    doSearch(searchInput.value);
+                }
+            });
+            
+            // 输入时显示/隐藏清除按钮
+            searchInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    clearBtn.classList.add('show');
+                } else {
+                    clearBtn.classList.remove('show');
+                }
+            });
+            
+            // 清除按钮
+            clearBtn.addEventListener('click', function() {
+                searchInput.value = '';
+                this.classList.remove('show');
+                searchInput.focus();
+                renderSearchSuggestions();
+                // 清除URL参数
+                const url = new URL(window.location);
+                url.searchParams.delete('q');
+                window.history.pushState({}, '', url);
+            });
+            
+            // 输入框获得焦点时自动选中文字
+            searchInput.addEventListener('focus', function() {
+                this.select();
+            });
+        }
+        
+        init();
+    </script>
+</body>
+</html>

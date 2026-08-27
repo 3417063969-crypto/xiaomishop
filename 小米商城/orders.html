@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>我的订单 - 小米商城</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1226px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* ========== 顶部导航栏 ========== */
+        .top-bar {
+            background: #333;
+            color: #999;
+            font-size: 12px;
+            padding: 8px 0;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-links a, .user-links a {
+            color: #b0b0b0;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .top-links a:hover, .user-links a:hover {
+            color: #ff6700;
+        }
+
+        .separator {
+            color: #424242;
+            margin: 0 5px;
+        }
+
+        /* ========== 主头部 ========== */
+        .main-header {
+            background: #fff;
+            padding: 22px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .main-header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon-img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff6700;
+        }
+
+        .logo-text span {
+            color: #333;
+            font-weight: 400;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .cart-icon:hover {
+            color: #ff6700;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -12px;
+            background: #ff6700;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 20px;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* ========== 面包屑 ========== */
+        .breadcrumb {
+            padding: 20px 0;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: #ff6700;
+        }
+
+        /* ========== 订单状态标签 ========== */
+        .order-tabs {
+            display: flex;
+            gap: 30px;
+            background: #fff;
+            padding: 0 20px;
+            border-radius: 16px 16px 0 0;
+            margin-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .order-tab {
+            padding: 15px 0;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .order-tab.active {
+            color: #ff6700;
+            font-weight: 500;
+        }
+
+        .order-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ff6700;
+        }
+
+        /* ========== 订单列表 ========== */
+        .orders-container {
+            background: #fff;
+            border-radius: 0 0 16px 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            min-height: 400px;
+        }
+
+        .order-item {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-info {
+            display: flex;
+            gap: 30px;
+            font-size: 13px;
+        }
+
+        .order-no {
+            color: #666;
+        }
+
+        .order-time {
+            color: #999;
+        }
+
+        .order-status {
+            font-weight: 500;
+        }
+
+        .order-status.pending { color: #ff6700; }
+        .order-status.paid { color: #4caf50; }
+        .order-status.shipped { color: #2196f3; }
+        .order-status.completed { color: #999; }
+        .order-status.cancelled { color: #e4393c; }
+
+        .order-products {
+            padding: 15px 20px;
+        }
+
+        .order-product-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+        }
+
+        .order-product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .order-product-info {
+            flex: 1;
+        }
+
+        .order-product-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .order-product-spec {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .order-product-price {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .order-product-price .price {
+            color: #ff6700;
+        }
+
+        .order-product-price .quantity {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #fafafa;
+            border-top: 1px solid #eee;
+        }
+
+        .order-total {
+            font-size: 14px;
+        }
+
+        .order-total .total-price {
+            color: #ff6700;
+            font-size: 18px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .order-actions button {
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-pay {
+            background: #ff6700;
+            color: white;
+            border: none;
+        }
+
+        .btn-pay:hover {
+            background: #f85c00;
+        }
+
+        .btn-cancel {
+            background: none;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            border-color: #e4393c;
+            color: #e4393c;
+        }
+
+        .btn-buy-again {
+            background: none;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .btn-buy-again:hover {
+            border-color: #ff6700;
+            color: #ff6700;
+        }
+
+        .btn-view {
+            background: none;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .btn-view:hover {
+            border-color: #ff6700;
+            color: #ff6700;
+        }
+
+        /* 空状态 */
+        .empty-orders {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .empty-orders-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-orders p {
+            color: #999;
+            margin-bottom: 20px;
+        }
+
+        .empty-orders-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #ff6700;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 14px;
+        }
+
+        /* 订单详情弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .order-detail-modal {
+            background: #fff;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 24px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .order-detail-modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 24px 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            width: 100px;
+            color: #999;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+
+        /* 底部 Footer */
+        .footer {
+            background: #fff;
+            margin-top: 40px;
+            padding: 40px 0 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h4 {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .footer-col a {
+            display: block;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .footer-col a:hover {
+            color: #ff6700;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .order-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            .order-info {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            .order-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .order-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .footer-links {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .order-tabs {
+                gap: 15px;
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-links">
+                <a href="#">小米商城</a>
+                <span class="separator">|</span>
+                <a href="#">MIUI</a>
+                <span class="separator">|</a>
+                <a href="#">云服务</a>
+                <span class="separator">|</span>
+                <a href="#">小米运动</a>
+            </div>
+            <div class="user-links">
+                <a href="profile.html"userNameDisplay">个人中心</a>
+                <span class="separator">|</span>
+                <a href="login.html" id="logoutBtn">退出登录</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主头部 -->
+    <div class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo-area">
+                <img src="images/小米logo.jpg" alt="Logo" class="logo-icon-img">
+                <div class="logo-text">小米<span>商城</span></div>
+            </a>
+            <a href="cart.html" class="cart-icon">
+                🛒
+                <span class="cart-count" id="cartCount">0</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="index.html">首页</a>
+            <span>&gt;</span>
+            <span>我的订单</span>
+        </div>
+
+        <!-- 订单状态标签 -->
+        <div class="order-tabs" id="orderTabs">
+            <div class="order-tab active" data-status="all">全部订单</div>
+            <div class="order-tab" data-status="pending">待付款</div>
+            <div class="order-tab" data-status="paid">已付款</div>
+            <div class="order-tab" data-status="shipped">已发货</div>
+            <div class="order-tab" data-status="completed">已完成</div>
+            <div class="order-tab" data-status="cancelled">已取消</div>
+        </div>
+
+        <!-- 订单列表 -->
+        <div class="orders-container" id="ordersContainer"></div>
+    </div>
+
+    <!-- 订单详情弹窗 -->
+    <div class="modal-overlay" id="orderDetailModal">
+        <div class="order-detail-modal">
+            <div class="modal-header">
+                <h3>订单详情</h3>
+                <div class="modal-close" id="closeDetailBtn">✕</div>
+            </div>
+            <div class="modal-body" id="orderDetailBody"></div>
+        </div>
+    </div>
+
+    <!-- 底部 Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>帮助中心</h4>
+                    <a href="#">账户管理</a>
+                    <a href="#">购物指南</a>
+                    <a href="#">订单操作</a>
+                </div>
+                <div class="footer-col">
+                    <h4>服务支持</h4>
+                    <a href="#">售后政策</a>
+                    <a href="#">自助服务</a>
+                    <a href="#">联系客服</a>
+                </div>
+                <div class="footer-col">
+                    <h4>小米之家</h4>
+                    <a href="#">查找门店</a>
+                    <a href="#">小米之家</a>
+                    <a href="#">小米社区</a>
+                </div>
+                <div class="footer-col">
+                    <h4>关注我们</h4>
+                    <a href="#">新浪微博</a>
+                    <a href="#">官方微信</a>
+                    <a href="#">小米商城APP</a>
+                </div>
+                <div class="footer-col">
+                    <h4>合作加盟</h4>
+                    <a href="#">小米直销</a>
+                    <a href="#">企业团购</a>
+                    <a href="#">联盟合作</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2026 小米商城 版权所有 | 探索科技美好生活</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取订单列表
+        function getOrders() {
+            return JSON.parse(localStorage.getItem('orders') || '[]');
+        }
+
+        // 保存订单列表
+        function saveOrders(orders) {
+            localStorage.setItem('orders', JSON.stringify(orders));
+        }
+
+        // 订单状态文本映射
+        const statusMap = {
+            pending: '待付款',
+            paid: '已付款',
+            shipped: '已发货',
+            completed: '已完成',
+            cancelled: '已取消'
+        };
+
+        // 订单状态样式类
+        function getStatusClass(status) {
+            switch(status) {
+                case 'pending': return 'pending';
+                case 'paid': return 'paid';
+                case 'shipped': return 'shipped';
+                case 'completed': return 'completed';
+                case 'cancelled': return 'cancelled';
+                default: return '';
+            }
+        }
+
+        // 渲染订单列表
+        function renderOrders(filterStatus = 'all') {
+            let orders = getOrders();
+            
+            if (filterStatus !== 'all') {
+                orders = orders.filter(order => order.status === filterStatus);
+            }
+            
+            const container = document.getElementById('ordersContainer');
+            
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-orders">
+                        <div class="empty-orders-icon">📋</div>
+                        <p>暂无订单</p>
+                        <a href="index.html" class="empty-orders-btn">去逛逛</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = orders.map(order => `
+                <div class="order-item" data-order-id="${order.id}">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <span class="order-no">订单号：${order.orderNo}</span>
+                            <span class="order-time">下单时间：${order.createTime}</span>
+                        </div>
+                        <div class="order-status ${getStatusClass(order.status)}">${statusMap[order.status]}</div>
+                    </div>
+                    <div class="order-products">
+                        ${order.items.map(item => `
+                            <div class="order-product-item">
+                                <img src="${item.image}" alt="${item.name}" class="order-product-img" onerror="this.src='https://picsum.photos/60/60'">
+                                <div class="order-product-info">
+                                    <div class="order-product-name">${item.name}</div>
+                                    <div class="order-product-spec">${item.spec || '标准版'}</div>
+                                </div>
+                                <div class="order-product-price">
+                                    <div class="price">¥${item.price.toLocaleString()}</div>
+                                    <div class="quantity">x${item.quantity}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-total">
+                            共${order.items.reduce((sum, item) => sum + item.quantity, 0)}件商品 合计：
+                            <span class="total-price">¥${order.total.toLocaleString()}</span>
+                        </div>
+                        <div class="order-actions">
+                            ${order.status === 'pending' ? `
+                                <button class="btn-pay" data-id="${order.id}">去付款</button>
+                                <button class="btn-cancel" data-id="${order.id}">取消订单</button>
+                            ` : ''}
+                            ${order.status === 'paid' ? `
+                                <button class="btn-view" data-id="${order.id}">查看物流</button>
+                            ` : ''}
+                            ${order.status === 'shipped' ? `
+                                <button class="btn-view" data-id="${order.id}">确认收货</button>
+                            ` : ''}
+                            ${order.status === 'completed' ? `
+                                <button class="btn-buy-again" data-id="${order.id}">再次购买</button>
+                            ` : ''}
+                            <button class="btn-view" data-id="${order.id}">订单详情</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // 绑定订单操作事件
+            bindOrderEvents();
+        }
+
+        // 绑定订单操作事件
+        function bindOrderEvents() {
+            // 去付款
+            document.querySelectorAll('.btn-pay').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const orderId = parseInt(btn.dataset.id);
+                    payOrder(orderId);
+                });
+            });
+            
+            // 取消订单
+            document.querySelectorAll('.btn-cancel').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const orderId = parseInt(btn.dataset.id);
+                    cancelOrder(orderId);
+                });
+            });
+            
+            // 确认收货
+            document.querySelectorAll('.btn-view[data-id]').forEach(btn => {
+                if (btn.textContent === '确认收货') {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const orderId = parseInt(btn.dataset.id);
+                        confirmReceipt(orderId);
+                    });
+                }
+            });
+            
+            // 再次购买
+            document.querySelectorAll('.btn-buy-again').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const orderId = parseInt(btn.dataset.id);
+                    buyAgain(orderId);
+                });
+            });
+            
+            // 查看物流/订单详情
+            document.querySelectorAll('.btn-view').forEach(btn => {
+                if (btn.textContent !== '确认收货') {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const orderId = parseInt(btn.dataset.id);
+                        showOrderDetail(orderId);
+                    });
+                }
+            });
+        }
+
+        // 支付订单
+        function payOrder(orderId) {
+            const orders = getOrders();
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            if (orderIndex !== -1 && orders[orderIndex].status === 'pending') {
+                alert(`正在跳转到支付页面...\n订单号：${orders[orderIndex].orderNo}\n支付金额：¥${orders[orderIndex].total.toLocaleString()}`);
+                orders[orderIndex].status = 'paid';
+                saveOrders(orders);
+                renderOrders(getCurrentStatus());
+            }
+        }
+
+        // 取消订单
+        function cancelOrder(orderId) {
+            if (confirm('确定要取消这个订单吗？')) {
+                const orders = getOrders();
+                const orderIndex = orders.findIndex(o => o.id === orderId);
+                if (orderIndex !== -1 && orders[orderIndex].status === 'pending') {
+                    orders[orderIndex].status = 'cancelled';
+                    saveOrders(orders);
+                    renderOrders(getCurrentStatus());
+                    alert('订单已取消');
+                }
+            }
+        }
+
+        // 确认收货
+        function confirmReceipt(orderId) {
+            if (confirm('确认已收到商品吗？')) {
+                const orders = getOrders();
+                const orderIndex = orders.findIndex(o => o.id === orderId);
+                if (orderIndex !== -1 && orders[orderIndex].status === 'shipped') {
+                    orders[orderIndex].status = 'completed';
+                    saveOrders(orders);
+                    renderOrders(getCurrentStatus());
+                    alert('感谢您的确认！');
+                }
+            }
+        }
+
+        // 再次购买
+        function buyAgain(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                const cart = JSON.parse(localStorage.getItem('shoppingCart') || '[]');
+                order.items.forEach(item => {
+                    const existingIndex = cart.findIndex(c => c.id === item.id && c.spec === item.spec);
+                    if (existingIndex !== -1) {
+                        cart[existingIndex].quantity += item.quantity;
+                    } else {
+                        cart.push({ ...item });
+                    }
+                });
+                localStorage.setItem('shoppingCart', JSON.stringify(cart));
+                alert('已添加到购物车');
+                window.location.href = 'cart.html';
+            }
+        }
+
+        // 显示订单详情
+        function showOrderDetail(orderId) {
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            const modal = document.getElementById('orderDetailModal');
+            const body = document.getElementById('orderDetailBody');
+            
+            body.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-title">订单信息</div>
+                    <div class="detail-row">
+                        <div class="detail-label">订单号：</div>
+                        <div class="detail-value">${order.orderNo}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">下单时间：</div>
+                        <div class="detail-value">${order.createTime}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">订单状态：</div>
+                        <div class="detail-value" style="color: ${order.status === 'pending' ? '#ff6700' : '#4caf50'}">${statusMap[order.status]}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-title">收货信息</div>
+                    <div class="detail-row">
+                        <div class="detail-label">收货人：</div>
+                        <div class="detail-value">${order.address.name} ${order.address.phone}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">收货地址：</div>
+                        <div class="detail-value">${order.address.region} ${order.address.detail}</div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-title">商品清单</div>
+                    ${order.items.map(item => `
+                        <div class="order-product-item" style="padding: 10px 0;">
+                            <img src="${item.image}" class="order-product-img" style="width: 50px; height: 50px;" onerror="this.src='https://picsum.photos/50/50'">
+                            <div class="order-product-info">
+                                <div class="order-product-name">${item.name}</div>
+                                <div class="order-product-spec">${item.spec || '标准版'}</div>
+                            </div>
+                            <div class="order-product-price">
+                                <div class="price">¥${item.price.toLocaleString()}</div>
+                                <div class="quantity">x${item.quantity}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="detail-section">
+                    <div class="detail-title">支付信息</div>
+                    <div class="detail-row">
+                        <div class="detail-label">支付方式：</div>
+                        <div class="detail-value">${order.payment === 'alipay' ? '支付宝支付' : order.payment === 'wechat' ? '微信支付' : '银行卡支付'}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">商品总额：</div>
+                        <div class="detail-value">¥${order.total.toLocaleString()}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">运费：</div>
+                        <div class="detail-value">免运费</div>
+                    </div>
+                    <div class="detail-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+                        <div class="detail-label">实付款：</div>
+                        <div class="detail-value" style="color: #ff6700; font-size: 18px; font-weight: 600;">¥${order.total.toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        // 获取当前选中的状态
+        function getCurrentStatus() {
+            const activeTab = document.querySelector('.order-tab.active');
+            return activeTab ? activeTab.dataset.status : 'all';
+        }
+
+        // 更新购物车数量
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('shoppingCart') || '[]');
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) {
+                cartCountSpan.textContent = totalCount;
+            }
+        }
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') || sessionStorage.getItem('isLoggedIn');
+            const currentUser = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            const userNameSpan = document.getElementById('userNameDisplay');
+            
+            if (isLoggedIn && currentUser) {
+                if (userNameSpan) {
+                    userNameSpan.textContent = currentUser;
+                    userNameSpan.href = '#';
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 退出登录
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('isLoggedIn');
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('isLoggedIn');
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+        }
+
+        // 初始化状态切换
+        function initTabs() {
+            const tabs = document.querySelectorAll('.order-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    renderOrders(tab.dataset.status);
+                });
+            });
+        }
+
+        // 初始化详情弹窗
+        function initModal() {
+            const modal = document.getElementById('orderDetailModal');
+            const closeBtn = document.getElementById('closeDetailBtn');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+
+        // 初始化
+        function init() {
+            checkLoginStatus();
+            updateCartCount();
+            initTabs();
+            initModal();
+            renderOrders('all');
+        }
+        
+        init();
+    </script>
+</body>
+</html>
